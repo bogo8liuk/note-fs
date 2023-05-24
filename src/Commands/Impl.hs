@@ -17,7 +17,9 @@ runCommand cmd =
 seeCmd :: FilePath -> NotesKeeper ()
 seeCmd path = do
     notes <- getNotesOf path
-    displayLn ("---- NOTES ON " ++ path ++ " ----")
+    displayLn ""
+    displayLn ("    ---- NOTES ON " ++ path ++ " ----")
+    displayLn ""
     displayLn' notes
 
 takeNoteCmd :: FilePath -> Text -> NotesKeeper ()
