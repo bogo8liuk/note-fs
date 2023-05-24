@@ -2,10 +2,12 @@ module Env
     ( NotesState(..)
     , NotesKeeper
     , NotesErr(..)
+    , Mode(..)
     , throwError
     , retryOnError
     , catchError
     , handleErrorWith
+    , getMode
     , runAsIO
     , performIO
     , display
@@ -34,6 +36,10 @@ import JSON
 
 type NotesTable = Map FilePath Notes
 
+data Mode =
+      Repl
+    | Exe
+
 data NotesState =
     NotesState
         {- The notes on files. -}
@@ -45,6 +51,7 @@ data NotesState =
         , notesPath :: FilePath
         {- The repl history path. -}
         , historyPath :: FilePath
+        , mode :: Mode
         }
 
 data NotesErr =
@@ -134,6 +141,9 @@ update f = do
     env <- get
     put $ f env
 
+getMode :: NotesKeeper Mode
+getMode = gets mode
+
 isNotesInMem :: NotesKeeper Bool
 isNotesInMem = gets isPopulated
 
@@ -200,25 +210,29 @@ getNotesOf :: FilePath -> NotesKeeper Text
 getNotesOf path = do
     checkFileExists path
     table <- getNotes
-    case M.lookup path table of
+    path' <- performIO $ canonicalizePath path
+    case M.lookup path' table of
         Nothing -> throwError $ NotesNotFound path
         Just text -> return text
 
 removeEntry :: FilePath -> NotesKeeper ()
 removeEntry path = do
     table <- getNotes
-    let table' = delete path table
+    path' <- performIO $ canonicalizePath path
+    let table' = delete path' table
     update $ \env -> env { filesNotes = table' }
 
 overwriteEntry :: FilePath -> Text -> NotesKeeper ()
 overwriteEntry path notes = do
     table <- getNotes
-    let table' = insert path notes table
+    path' <- performIO $ canonicalizePath path
+    let table' = insert path' notes table
     update $ \env -> env { filesNotes = table' }
 
 appendNotes :: FilePath -> Text -> NotesKeeper ()
 appendNotes path notes = do
     createNotesDirIfMissing
-    let byteEntry = encodingNotes [(path, notes)]
+    path' <- performIO $ canonicalizePath path
+    let byteEntry = encodingNotes [(path', notes)]
     notesFile <- gets notesPath
     performIO $ BS.appendFile notesFile byteEntry
