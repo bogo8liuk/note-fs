@@ -26,7 +26,7 @@ perform = retryOnError $ do
     if prog == emptyProg
     then doNothing
     else do
-        cmd <- Parsing.anyCmd prog args
+        cmd <- Parsing.anyCommand prog args
         runCommand cmd
     perform
     where
