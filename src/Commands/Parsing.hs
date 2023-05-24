@@ -1,13 +1,15 @@
 module Commands.Parsing
-    ( anyCmd
+    ( seeCmd
+    , takeNoteCmd
+    , anyCommand
 ) where
 
-import Utils.Fancy
 import Utils.Monad
 import Data.Text
 import Options.Applicative hiding (empty)
 import Env
 import Commands
+import qualified Commands.Lexer as Lexer
 
 pathArg :: Parser FilePath
 pathArg =
@@ -59,10 +61,27 @@ seeCmd = performParser seeCmdParser
 takeNoteCmd :: String -> [String] -> NotesKeeper Command
 takeNoteCmd = performParser takeNoteCmdParser
 
-getCommandFrom :: String -> (String -> [String] -> NotesKeeper Command)
-getCommandFrom "see" = seeCmd
-getCommandFrom "take" = takeNoteCmd
-getCommandFrom prog = \_ _ -> throwError $ InvalidCommand prog
+exeGetCommand :: String -> (String -> [String] -> NotesKeeper Command)
+exeGetCommand prog
+    | prog == Lexer.exeSee =
+        seeCmd
+    | prog == Lexer.exeTakeNote =
+        takeNoteCmd
+    | otherwise =
+        \_ _ -> throwError $ InvalidCommand prog
 
-anyCmd :: String -> [String] -> NotesKeeper Command
-anyCmd prog = getCommandFrom prog prog
+replGetCommand :: String -> (String -> [String] -> NotesKeeper Command)
+replGetCommand prog
+    | prog == Lexer.replSee =
+        seeCmd
+    | prog == Lexer.replTakeNote =
+        takeNoteCmd
+    | otherwise =
+        \_ _ -> throwError $ InvalidCommand prog
+
+anyCommand :: String -> [String] -> NotesKeeper Command
+anyCommand prog args = do
+    mode <- getMode
+    case mode of
+        Repl -> replGetCommand prog prog args
+        Exe -> exeGetCommand prog prog args
