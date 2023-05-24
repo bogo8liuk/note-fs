@@ -1,3 +1,5 @@
+module Repl where
+
 import Programs
 
 main :: IO ()
