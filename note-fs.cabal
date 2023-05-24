@@ -26,6 +26,7 @@ library
   exposed-modules:
       Commands
       Commands.Impl
+      Commands.Lexer
       Commands.Parsing
       Config
       Env
@@ -50,13 +51,61 @@ library
     , text
   default-language: Haskell2010
 
-executable repl
+executable nfs-repl
   main-is: Repl.hs
   other-modules:
+      See
+      TakeNote
       Paths_note_fs
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N -main-is Repl
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , hs-utils
+    , mtl
+    , note-fs
+    , optparse-applicative
+    , text
+  default-language: Haskell2010
+
+executable nfs-see
+  main-is: See.hs
+  other-modules:
+      Repl
+      TakeNote
+      Paths_note_fs
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N -main-is See
+  build-depends:
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , hs-utils
+    , mtl
+    , note-fs
+    , optparse-applicative
+    , text
+  default-language: Haskell2010
+
+executable nfs-take
+  main-is: TakeNote.hs
+  other-modules:
+      Repl
+      See
+      Paths_note_fs
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N -main-is TakeNote
   build-depends:
       aeson
     , base >=4.7 && <5

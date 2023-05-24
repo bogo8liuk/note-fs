@@ -45,13 +45,34 @@ library:
   source-dirs: src
 
 executables:
-  repl:
+  nfs-repl:
     main:                Repl.hs
     source-dirs:         app
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -main-is Repl
+    dependencies:
+    - note-fs
+  nfs-see:
+    main:                See.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -main-is See
+    dependencies:
+    - note-fs
+  nfs-take:
+    main:                TakeNote.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -main-is TakeNote
     dependencies:
     - note-fs
 
