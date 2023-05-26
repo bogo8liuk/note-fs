@@ -26,7 +26,6 @@ module Env
 ) where
 
 import Utils.Fancy
-import Utils.Data.Counter
 import Utils.Monad
 import Data.Text
 import qualified Data.Text.IO as Text (putStrLn, putStr, writeFile, readFile)
@@ -36,10 +35,7 @@ import Control.Monad.State
 import Control.Monad.Except
 import System.FilePath
 import System.Directory
-import System.IO (openFile, IOMode(..), hClose)
 import System.Process (rawSystem)
---For editing file lock
-import GHC.IO.Handle.Lock
 import JSON
 
 type NotesTable = Map FilePath Notes
@@ -265,35 +261,13 @@ overwriteEntry path notes = do
 runOnEditingFile :: ProgName -> Text -> NotesKeeper Text
 runOnEditingFile prog oldNotes = do
     editPath <- gets editingPath
-    let counter = new :: CounterObj
-    (path, handle) <- performIO $ repeatedlyTryLock editPath counter
-    performIO $ runProg path handle
+    runProg editPath
     where
-        {- It tries to lock new files until success. Then it runs `prog` shell command. -}
-        repeatedlyTryLock path counter = do
-            {- Opening the file just to obtain the handle to pass to lock function. -}
-            handle <- openFile path ReadWriteMode
-            owned <- hTryLock handle ExclusiveLock
-            if owned
-            then do
-                return (path, handle)
-            else do
-                hClose handle
-                let (suffix, counter') = next counter
-                repeatedlyTryLock (path -<.> suffix) counter'
-
-        runProg path handle = do
+        runProg path = performIO $ do
             {- Writing the file with the old notes, in order to give the abstraction of editing notes. -}
             Text.writeFile path oldNotes
             rawSystem prog [path] --TODO: add arguments
-            content <- Text.readFile path
-            {- The file is no more useful, so it is removed.
-            NB: it is removed before the handle is unlocked, because if the lock is released before the file is
-            removed, someone else can access the file in the middle (namely before the file is removed). -}
-            removeFile path
-            hUnlock handle
-            hClose handle
-            return content
+            Text.readFile path
 
 editEntryWith :: ProgName -> FilePath -> NotesKeeper ()
 editEntryWith prog path = do
