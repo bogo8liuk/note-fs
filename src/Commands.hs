@@ -1,5 +1,6 @@
 module Commands
     ( Command(..)
+    , isExitCmd
 ) where
 
 import Utils.Fancy (ProgName)
@@ -9,3 +10,8 @@ data Command =
       SEE FilePath
     | TAKE FilePath Text
     | EDIT ProgName FilePath
+    | EXIT
+
+isExitCmd :: Command -> Bool
+isExitCmd EXIT = True
+isExitCmd _ = False
