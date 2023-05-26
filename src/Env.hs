@@ -176,9 +176,12 @@ ifNotesInMem doWith cont = do
 
 decodeNotes :: BS.ByteString -> NotesKeeper NotesTable
 decodeNotes bs =
-    case JSON.decodingNotes bs of
-        Left reason -> throwError $ JSONErr reason
-        Right notes -> return $ fromList notes
+    if BS.null bs
+    then return M.empty
+    else
+        case JSON.decodingNotes bs of
+            Left reason -> throwError $ JSONErr reason
+            Right notes -> return $ fromList notes
 
 populateNotes :: NotesKeeper ()
 populateNotes = do
