@@ -1,18 +1,26 @@
 module Commands.Lexer
     ( replSee
-    , replTakeNote
+    , replTake
+    , replEdit
     , exeSee
-    , exeTakeNote
+    , exeTake
+    , exeEdit
 ) where
 
 replSee :: String
 replSee = "see"
 
-replTakeNote :: String
-replTakeNote = "take"
+replTake :: String
+replTake = "take"
+
+replEdit :: String
+replEdit = "edit"
 
 exeSee :: String
 exeSee = "nfs-see"
 
-exeTakeNote :: String
-exeTakeNote = "nfs-take"
+exeTake :: String
+exeTake = "nfs-take"
+
+exeEdit :: String
+exeEdit = "nfs-edit"

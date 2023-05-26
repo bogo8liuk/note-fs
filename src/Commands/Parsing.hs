@@ -1,6 +1,6 @@
 module Commands.Parsing
     ( seeCmd
-    , takeNoteCmd
+    , takeCmd
     , anyCommand
 ) where
 
@@ -25,6 +25,13 @@ notesArg =
         <> help "the notes associated to a file"
         )
 
+progArg :: Parser ProgName
+progArg =
+    strArgument
+        (  metavar "PROG"
+        <> help "the program to use for opening a file"
+        )
+
 defaultMods :: String -> InfoMod a
 defaultMods headerStr =
        fullDesc
@@ -37,12 +44,19 @@ seeCmdParser =
         args :: Parser FilePath
         args = pathArg
 
-takeNoteCmdParser :: ParserInfo Command
-takeNoteCmdParser =
-    uncurry TAKE_NOTE <$> info (args <**> helper) (defaultMods "take - take notes on a file")
+takeCmdParser :: ParserInfo Command
+takeCmdParser =
+    uncurry TAKE <$> info (args <**> helper) (defaultMods "take - take notes on a file")
     where
         args :: Parser (FilePath, Text)
         args = pathArg `pairA` notesArg
+
+editCmdParser :: ParserInfo Command
+editCmdParser =
+    uncurry EDIT <$> info (args <**> helper) (defaultMods "edit - change notes on a file")
+    where
+        args :: Parser (ProgName, FilePath)
+        args = progArg `pairA` pathArg
 
 performParser :: ParserInfo Command -> String -> [String] -> NotesKeeper Command
 performParser parseCmd prog args =
@@ -58,15 +72,19 @@ performParser parseCmd prog args =
 seeCmd :: String -> [String] -> NotesKeeper Command
 seeCmd = performParser seeCmdParser
 
-takeNoteCmd :: String -> [String] -> NotesKeeper Command
-takeNoteCmd = performParser takeNoteCmdParser
+takeCmd :: String -> [String] -> NotesKeeper Command
+takeCmd = performParser takeCmdParser
+
+editCmd :: String -> [String] -> NotesKeeper Command
+editCmd = performParser editCmdParser
 
 exeGetCommand :: String -> (String -> [String] -> NotesKeeper Command)
 exeGetCommand prog
     | prog == Lexer.exeSee =
         seeCmd
-    | prog == Lexer.exeTakeNote =
-        takeNoteCmd
+    | prog == Lexer.exeTake =
+        takeCmd
+    --TODO: edit command
     | otherwise =
         \_ _ -> throwError $ InvalidCommand prog
 
@@ -74,8 +92,10 @@ replGetCommand :: String -> (String -> [String] -> NotesKeeper Command)
 replGetCommand prog
     | prog == Lexer.replSee =
         seeCmd
-    | prog == Lexer.replTakeNote =
-        takeNoteCmd
+    | prog == Lexer.replTake =
+        takeCmd
+    | prog == Lexer.replEdit =
+        editCmd
     | otherwise =
         \_ _ -> throwError $ InvalidCommand prog
 
