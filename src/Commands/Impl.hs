@@ -9,6 +9,9 @@ import Data.Text
 import Env
 import Commands
 
+{- In write-mode commands (so, for example, `see` is excluded), the changes are committed to the file-system only when
+the mode is `Exe`. -}
+
 seeCmd :: FilePath -> NotesKeeper ()
 seeCmd path = do
     notes <- getNotesOf path

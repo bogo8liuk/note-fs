@@ -97,7 +97,7 @@ instance Show NotesErr where
     show (NotesNotFound path) = "File " ++ path ++ " has no associated notes"
     show (InvalidNotesPath path) = "Invalid notes file " ++ path
     show (JSONErr reason) = "Conversion from/to json not successful due to: " ++ reason
-    show (InvalidCommand cmd) =  "Not a command: " ++ cmd
+    show (InvalidCommand cmd) = "Not a command: " ++ cmd
     show (InvalidArgs usage) = usage
 
 type NotesKeeper = StateT NotesState (ExceptT NotesErr IO)
@@ -210,6 +210,8 @@ createHistoryDirIfMissing = do
     let historyDir = takeDirectory historyFile
     performIO $ createDirectoryIfMissing True historyDir
 
+{- It writes the notes table to the notes file. Useful for lazy commits, namely not performing IO on the file-system until
+it is really necessary. -}
 commitChanges :: NotesKeeper ()
 commitChanges = do
     createNotesDirIfMissing

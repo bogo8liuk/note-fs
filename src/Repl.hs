@@ -38,4 +38,6 @@ purePerform = retryOnError $ do
 perform :: NotesKeeper ()
 perform = do
     purePerform
+    {- The changes are committed only at the end of the repl. This offers a better efficiency, since IO actions on the
+    file-system could be expensive. -}
     commitChanges
