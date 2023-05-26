@@ -4,6 +4,7 @@ module Commands.Impl
     , runCommand
 ) where
 
+import Utils.Fancy (ProgName)
 import Data.Text
 import Env
 import Commands
@@ -20,13 +21,14 @@ takeCmd :: FilePath -> Text -> NotesKeeper ()
 takeCmd path notes = do
     checkFileExists path
     displayLn ("...taking notes on " ++ path ++ "...")
-    appendNotes path notes
     overwriteEntry path notes
+    commitIfExeMode
 
 editCmd :: ProgName -> FilePath -> NotesKeeper ()
 editCmd prog path = do
     checkFileExists path
-    undefined --TODO
+    editEntryWith prog path
+    commitIfExeMode
 
 runCommand :: Command -> NotesKeeper ()
 runCommand cmd =

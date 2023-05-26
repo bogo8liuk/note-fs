@@ -18,8 +18,8 @@ fetchOpts input =
         [] -> return (emptyProg, [])
         (w : ws) -> return (w, ws)
 
-perform :: NotesKeeper ()
-perform = retryOnError $ do
+purePerform :: NotesKeeper ()
+purePerform = retryOnError $ do
     displayPrompt
     cmdStr <- performIO getLine
     (prog, args) <- fetchOpts cmdStr
@@ -28,9 +28,14 @@ perform = retryOnError $ do
     else do
         cmd <- Parsing.anyCommand prog args
         runCommand cmd
-    perform
+    purePerform
     where
         displayPrompt = do
             display Config.replPrompt
             {- Flushing the prompt, since it has no newline character. -}
             performIO $ hFlush stdout
+
+perform :: NotesKeeper ()
+perform = do
+    purePerform
+    commitChanges
