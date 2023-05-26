@@ -16,17 +16,19 @@ module Env
     , displayLn'
     , ResumeOp
     , checkFileExists
+    , commitChanges
+    , commitIfExeMode
     , getNotesOf
     , removeEntry
     , overwriteEntry
-    , appendNotes
+    , editEntryWith
 ) where
 
 import Utils.Fancy
 import Utils.Data.Counter
 import Utils.Monad
 import Data.Text
-import qualified Data.Text.IO as Text (putStrLn, putStr)
+import qualified Data.Text.IO as Text (putStrLn, putStr, writeFile, readFile)
 import qualified Data.ByteString.Lazy as BS
 import Data.Map.Strict as M hiding (update)
 import Control.Monad.State
@@ -208,6 +210,21 @@ createHistoryDirIfMissing = do
     let historyDir = takeDirectory historyFile
     performIO $ createDirectoryIfMissing True historyDir
 
+commitChanges :: NotesKeeper ()
+commitChanges = do
+    createNotesDirIfMissing
+    table <- getNotes
+    let byteEntry = encodingNotes $ toList table
+    notesFile <- gets notesPath
+    performIO $ BS.writeFile notesFile byteEntry
+
+commitIfExeMode :: NotesKeeper ()
+commitIfExeMode = do
+    mode <- getMode
+    case mode of
+        Exe -> commitChanges
+        Repl -> doNothing
+
 getNotes :: NotesKeeper NotesTable
 getNotes =
     ifNotesInMem
@@ -239,16 +256,8 @@ overwriteEntry path notes = do
     let table' = insert path' notes table
     update $ \env -> env { filesNotes = table' }
 
-appendNotes :: FilePath -> Text -> NotesKeeper ()
-appendNotes path notes = do
-    createNotesDirIfMissing
-    path' <- performIO $ canonicalizePath path
-    let byteEntry = encodingNotes [(path', notes)]
-    notesFile <- gets notesPath
-    performIO $ BS.appendFile notesFile byteEntry
-
-runOnEditingFile :: ProgName -> NotesKeeper String
-runOnEditingFile prog = do
+runOnEditingFile :: ProgName -> Text -> NotesKeeper Text
+runOnEditingFile prog oldNotes = do
     editPath <- gets editingPath
     let counter = new :: CounterObj
     (path, handle) <- performIO $ repeatedlyTryLock editPath counter
@@ -268,8 +277,10 @@ runOnEditingFile prog = do
                 repeatedlyTryLock (path -<.> suffix) counter'
 
         runProg path handle = do
+            {- Writing the file with the old notes, in order to give the abstraction of editing notes. -}
+            Text.writeFile path oldNotes
             rawSystem prog [path] --TODO: add arguments
-            content <- readFile path
+            content <- Text.readFile path
             {- The file is no more useful, so it is removed.
             NB: it is removed before the handle is unlocked, because if the lock is released before the file is
             removed, someone else can access the file in the middle (namely before the file is removed). -}
@@ -277,3 +288,9 @@ runOnEditingFile prog = do
             hUnlock handle
             hClose handle
             return content
+
+editEntryWith :: ProgName -> FilePath -> NotesKeeper ()
+editEntryWith prog path = do
+    oldNotes <- getNotesOf path
+    notes <- runOnEditingFile prog oldNotes
+    overwriteEntry path notes
