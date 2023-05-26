@@ -191,7 +191,7 @@ populateNotes = do
     then do
         byteSrc <- performIO $ BS.readFile path
         notes <- decodeNotes byteSrc
-        update $ \env -> env { filesNotes = notes }
+        update $ \env -> env { filesNotes = notes, isPopulated = True }
     else
         throwError $ InvalidNotesPath path
 
