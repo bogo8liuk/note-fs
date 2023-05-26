@@ -4,6 +4,7 @@ module Commands.Impl
     , runCommand
 ) where
 
+import Utils.Monad (doNothing)
 import Utils.Fancy (ProgName)
 import Data.Text
 import Env
@@ -36,9 +37,13 @@ editCmd prog path = do
     editEntryWith prog path'
     commitIfExeMode
 
+exitCmd :: NotesKeeper ()
+exitCmd = doNothing
+
 runCommand :: Command -> NotesKeeper ()
 runCommand cmd =
     case cmd of
         SEE path -> seeCmd path
         TAKE path notes -> takeCmd path notes
         EDIT prog path -> editCmd prog path
+        EXIT -> exitCmd

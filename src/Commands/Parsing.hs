@@ -1,13 +1,15 @@
 module Commands.Parsing
     ( seeCmd
     , takeCmd
+    , editCmd
+    , exitCmd
     , anyCommand
 ) where
 
 import Utils.Fancy (ProgName)
 import Utils.Monad
 import Data.Text
-import Options.Applicative hiding (empty)
+import Options.Applicative as Opt
 import Env
 import Commands
 import qualified Commands.Lexer as Lexer
@@ -59,6 +61,12 @@ editCmdParser =
         args :: Parser (ProgName, FilePath)
         args = progArg `pairA` pathArg
 
+exitCmdParser :: ParserInfo Command
+exitCmdParser =
+    EXIT <$ info (noArgs <**> helper) (defaultMods "exit - exit the note-fs program")
+    where
+        noArgs = Opt.empty :: Parser ()
+
 performParser :: ParserInfo Command -> String -> [String] -> NotesKeeper Command
 performParser parseCmd prog args =
     case execParserPure (prefs prefsMod) parseCmd args of
@@ -79,13 +87,17 @@ takeCmd = performParser takeCmdParser
 editCmd :: String -> [String] -> NotesKeeper Command
 editCmd = performParser editCmdParser
 
+exitCmd :: String -> [String] -> NotesKeeper Command
+exitCmd = performParser exitCmdParser
+
 exeGetCommand :: String -> (String -> [String] -> NotesKeeper Command)
 exeGetCommand prog
     | prog == Lexer.exeSee =
         seeCmd
     | prog == Lexer.exeTake =
         takeCmd
-    --TODO: edit command
+    | prog == Lexer.exeEdit =
+        editCmd
     | otherwise =
         \_ _ -> throwError $ InvalidCommand prog
 
@@ -97,6 +109,8 @@ replGetCommand prog
         takeCmd
     | prog == Lexer.replEdit =
         editCmd
+    | prog == Lexer.replExit =
+        exitCmd
     | otherwise =
         \_ _ -> throwError $ InvalidCommand prog
 

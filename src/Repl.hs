@@ -2,10 +2,11 @@ module Repl
     ( perform
 ) where
 
-import Utils.Monad
+import Control.Monad (unless)
 import System.IO
 import Config
 import Env
+import Commands
 import Commands.Impl
 import Commands.Lexer as Lexer
 import Commands.Parsing as Parsing
@@ -29,12 +30,12 @@ purePerform = retryOnError $ do
         manageCommand prog args
             | prog == Lexer.replEmptyProg =
                 purePerform
-            | prog == Lexer.replExit =
-                doNothing
             | otherwise = do
                 cmd <- Parsing.anyCommand prog args
                 runCommand cmd
-                purePerform
+                {- Special handling for exit command, since it actually cannot have the control of the repl: it's not
+                up to the exit command op-code to know the repl logic. -}
+                unless (isExitCmd cmd) purePerform
 
         displayPrompt = do
             display Config.replPrompt
