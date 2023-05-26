@@ -27,6 +27,7 @@ dependencies:
 - containers
 - filepath
 - directory
+- process
 - optparse-applicative
 - hs-utils
 
@@ -40,6 +41,7 @@ ghc-options:
 - -Wmissing-home-modules
 - -Wpartial-fields
 - -Wredundant-constraints
+- -Wno-unused-do-bind
 
 library:
   source-dirs: src
@@ -66,13 +68,13 @@ executables:
     dependencies:
     - note-fs
   nfs-take:
-    main:                TakeNote.hs
+    main:                Take.hs
     source-dirs:         app
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
-    - -main-is TakeNote
+    - -main-is Take
     dependencies:
     - note-fs
 

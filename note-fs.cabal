@@ -37,7 +37,7 @@ library
       Paths_note_fs
   hs-source-dirs:
       src
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -48,6 +48,7 @@ library
     , hs-utils
     , mtl
     , optparse-applicative
+    , process
     , text
   default-language: Haskell2010
 
@@ -55,11 +56,11 @@ executable nfs-repl
   main-is: Repl.hs
   other-modules:
       See
-      TakeNote
+      Take
       Paths_note_fs
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N -main-is Repl
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N -main-is Repl
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -71,6 +72,7 @@ executable nfs-repl
     , mtl
     , note-fs
     , optparse-applicative
+    , process
     , text
   default-language: Haskell2010
 
@@ -78,11 +80,11 @@ executable nfs-see
   main-is: See.hs
   other-modules:
       Repl
-      TakeNote
+      Take
       Paths_note_fs
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N -main-is See
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N -main-is See
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -94,18 +96,19 @@ executable nfs-see
     , mtl
     , note-fs
     , optparse-applicative
+    , process
     , text
   default-language: Haskell2010
 
 executable nfs-take
-  main-is: TakeNote.hs
+  main-is: Take.hs
   other-modules:
       Repl
       See
       Paths_note_fs
   hs-source-dirs:
       app
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N -main-is TakeNote
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N -main-is Take
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -117,6 +120,7 @@ executable nfs-take
     , mtl
     , note-fs
     , optparse-applicative
+    , process
     , text
   default-language: Haskell2010
 
@@ -127,7 +131,7 @@ test-suite note-fs-test
       Paths_note_fs
   hs-source-dirs:
       test
-  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -Wno-unused-do-bind -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
     , base >=4.7 && <5
@@ -139,5 +143,6 @@ test-suite note-fs-test
     , mtl
     , note-fs
     , optparse-applicative
+    , process
     , text
   default-language: Haskell2010
