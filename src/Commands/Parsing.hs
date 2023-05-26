@@ -4,6 +4,7 @@ module Commands.Parsing
     , anyCommand
 ) where
 
+import Utils.Fancy (ProgName)
 import Utils.Monad
 import Data.Text
 import Options.Applicative hiding (empty)
