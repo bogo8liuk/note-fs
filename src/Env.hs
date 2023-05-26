@@ -18,6 +18,7 @@ module Env
     , checkFileExists
     , commitChanges
     , commitIfExeMode
+    , canonicalizePath'
     , getNotesOf
     , removeEntry
     , overwriteEntry
@@ -227,6 +228,9 @@ commitIfExeMode = do
         Exe -> commitChanges
         Repl -> doNothing
 
+canonicalizePath' :: FilePath -> NotesKeeper FilePath
+canonicalizePath' = performIO . canonicalizePath
+
 getNotes :: NotesKeeper NotesTable
 getNotes =
     ifNotesInMem
@@ -239,23 +243,20 @@ getNotesOf :: FilePath -> NotesKeeper Text
 getNotesOf path = do
     checkFileExists path
     table <- getNotes
-    path' <- performIO $ canonicalizePath path
-    case M.lookup path' table of
+    case M.lookup path table of
         Nothing -> throwError $ NotesNotFound path
         Just text -> return text
 
 removeEntry :: FilePath -> NotesKeeper ()
 removeEntry path = do
     table <- getNotes
-    path' <- performIO $ canonicalizePath path
-    let table' = delete path' table
+    let table' = delete path table
     update $ \env -> env { filesNotes = table' }
 
 overwriteEntry :: FilePath -> Text -> NotesKeeper ()
 overwriteEntry path notes = do
     table <- getNotes
-    path' <- performIO $ canonicalizePath path
-    let table' = insert path' notes table
+    let table' = insert path notes table
     update $ \env -> env { filesNotes = table' }
 
 runOnEditingFile :: ProgName -> Text -> NotesKeeper Text

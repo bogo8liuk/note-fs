@@ -7,7 +7,8 @@ module Programs
 import Data.Map.Strict
 import System.Exit (exitFailure)
 import System.Environment (getProgName, getArgs)
-import System.Directory (makeAbsolute)
+import System.FilePath ((</>))
+import System.Directory (getHomeDirectory)
 import Config
 import Env
 import Repl
@@ -16,9 +17,10 @@ import Commands.Parsing as Parsing
 
 setup :: Mode -> FilePath -> FilePath -> FilePath -> IO NotesState
 setup mode historyPath notesPath editPath = do
-    absHistoryPath <- makeAbsolute historyPath
-    absNotesPath <- makeAbsolute notesPath
-    absEditPath <- makeAbsolute editPath
+    homeDir <- getHomeDirectory
+    let absHistoryPath = homeDir </> historyPath
+    let absNotesPath = homeDir </> notesPath
+    let absEditPath = homeDir </> editPath
     return $ NotesState
         { filesNotes = empty
         , isPopulated = False

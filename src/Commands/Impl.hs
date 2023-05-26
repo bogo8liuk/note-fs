@@ -14,7 +14,8 @@ the mode is `Exe`. -}
 
 seeCmd :: FilePath -> NotesKeeper ()
 seeCmd path = do
-    notes <- getNotesOf path
+    path' <- canonicalizePath' path
+    notes <- getNotesOf path'
     displayLn ""
     displayLn ("    ---- NOTES ON " ++ path ++ " ----")
     displayLn ""
@@ -22,15 +23,17 @@ seeCmd path = do
 
 takeCmd :: FilePath -> Text -> NotesKeeper ()
 takeCmd path notes = do
-    checkFileExists path
-    displayLn ("...taking notes on " ++ path ++ "...")
-    overwriteEntry path notes
+    path' <- canonicalizePath' path
+    checkFileExists path'
+    displayLn ("...taking notes on " ++ path' ++ "...")
+    overwriteEntry path' notes
     commitIfExeMode
 
 editCmd :: ProgName -> FilePath -> NotesKeeper ()
 editCmd prog path = do
-    checkFileExists path
-    editEntryWith prog path
+    path' <- canonicalizePath' path
+    checkFileExists path'
+    editEntryWith prog path'
     commitIfExeMode
 
 runCommand :: Command -> NotesKeeper ()
