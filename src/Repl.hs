@@ -7,6 +7,7 @@ import System.IO
 import Config
 import Env
 import Commands.Impl
+import Commands.Lexer as Lexer
 import Commands.Parsing as Parsing
 
 emptyProg :: String
@@ -23,13 +24,18 @@ purePerform = retryOnError $ do
     displayPrompt
     cmdStr <- performIO getLine
     (prog, args) <- fetchOpts cmdStr
-    if prog == emptyProg
-    then doNothing
-    else do
-        cmd <- Parsing.anyCommand prog args
-        runCommand cmd
-    purePerform
+    manageCommand prog args
     where
+        manageCommand prog args
+            | prog == Lexer.replEmptyProg =
+                purePerform
+            | prog == Lexer.replExit =
+                doNothing
+            | otherwise = do
+                cmd <- Parsing.anyCommand prog args
+                runCommand cmd
+                purePerform
+
         displayPrompt = do
             display Config.replPrompt
             {- Flushing the prompt, since it has no newline character. -}
