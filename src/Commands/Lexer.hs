@@ -1,11 +1,19 @@
 module Commands.Lexer
-    ( replSee
+    ( replEmptyProg
+    , replExit
+    , replSee
     , replTake
     , replEdit
     , exeSee
     , exeTake
     , exeEdit
 ) where
+
+replEmptyProg :: String
+replEmptyProg = ""
+
+replExit :: String
+replExit = "exit"
 
 replSee :: String
 replSee = "see"
