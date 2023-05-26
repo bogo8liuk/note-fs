@@ -1,7 +1,7 @@
 module Programs
     ( repl
-    , see
-    , takeNote
+    , seeExec
+    , takeExec
 ) where
 
 import Data.Map.Strict
@@ -14,15 +14,17 @@ import Repl
 import Commands.Impl
 import Commands.Parsing as Parsing
 
-setup :: Mode -> FilePath -> FilePath -> IO NotesState
-setup mode historyPath notesPath = do
+setup :: Mode -> FilePath -> FilePath -> FilePath -> IO NotesState
+setup mode historyPath notesPath editPath = do
     absHistoryPath <- makeAbsolute historyPath
     absNotesPath <- makeAbsolute notesPath
+    absEditPath <- makeAbsolute editPath
     return $ NotesState
         { filesNotes = empty
         , isPopulated = False
         , notesPath = absNotesPath
         , historyPath = absHistoryPath
+        , editingPath = absEditPath
         , mode = mode
         }
 
@@ -32,7 +34,7 @@ exitOnError (Right ok) = return ok
 
 execCommand :: IO ()
 execCommand = do
-    st <- setup Exe Config.historyFile Config.notesFile
+    st <- setup Exe Config.historyFile Config.notesFile Config.editingFile
     prog <- getProgName
     args <- getArgs
     res <- runAsIO (parseCmdAndPerform prog args) st
@@ -48,15 +50,15 @@ execCommand = do
 
 {- The list of executables for single commands.
 NB: the implementations of commands are all equal, but they internally differs because of the prog name. -}
-see :: IO ()
-see = execCommand
+seeExec :: IO ()
+seeExec = execCommand
 
-takeNote :: IO ()
-takeNote = execCommand
+takeExec :: IO ()
+takeExec = execCommand
 
 repl :: IO ()
 repl = do
-    st <- setup Repl Config.historyFile Config.notesFile
+    st <- setup Repl Config.historyFile Config.notesFile Config.editingFile
     res <- runAsIO Repl.perform st
     {- This is done just for a better semantics. -}
     exitOnError res

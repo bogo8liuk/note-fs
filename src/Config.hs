@@ -2,10 +2,10 @@ module Config
     ( relativeRootDirectory
     , relativeHistoryFile
     , relativeNotesFile
-    , relativeEditingFileBase
+    , relativeEditingFile
     , notesFile
     , historyFile
-    , editingFileBase
+    , editingFile
     , replPrompt
 ) where
 
@@ -20,8 +20,8 @@ relativeHistoryFile = "history"
 relativeNotesFile :: FilePath
 relativeNotesFile = "notes"
 
-relativeEditingFileBase :: FilePath
-relativeEditingFileBase = "editing"
+relativeEditingFile :: FilePath
+relativeEditingFile = "editing"
 
 historyFile :: FilePath
 historyFile = relativeRootDirectory </> relativeHistoryFile
@@ -29,8 +29,8 @@ historyFile = relativeRootDirectory </> relativeHistoryFile
 notesFile :: FilePath
 notesFile = relativeRootDirectory </> relativeNotesFile
 
-editingFileBase :: FilePath
-editingFileBase = relativeRootDirectory </> relativeEditingFileBase
+editingFile :: FilePath
+editingFile = relativeRootDirectory </> relativeEditingFile
 
 replPrompt :: String
 replPrompt = "> "

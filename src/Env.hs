@@ -23,21 +23,28 @@ module Env
 ) where
 
 import Utils.Fancy
+import Utils.Data.Counter
 import Utils.Monad
 import Data.Text
 import qualified Data.Text.IO as Text (putStrLn, putStr)
-import Data.ByteString.Lazy as BS hiding (putStr)
+import qualified Data.ByteString.Lazy as BS
 import Data.Map.Strict as M hiding (update)
 import Control.Monad.State
 import Control.Monad.Except
 import System.FilePath
 import System.Directory
+import System.IO (openFile, IOMode(..), hClose)
+import System.Process (rawSystem)
+--For editing file lock
+import GHC.IO.Handle.Lock
 import JSON
 
 type NotesTable = Map FilePath Notes
 
 data Mode =
+    {- Commands are executed in a repl. -}
       Repl
+    {- Commands are executed as stand-alone executables -}
     | Exe
 
 data NotesState =
@@ -51,6 +58,9 @@ data NotesState =
         , notesPath :: FilePath
         {- The repl history path. -}
         , historyPath :: FilePath
+        {- The file where temporary notes can be taken. -}
+        , editingPath :: FilePath
+        {- The context where commands are executed. -}
         , mode :: Mode
         }
 
@@ -161,7 +171,7 @@ ifNotesInMem doWith cont = do
     else
         cont
 
-decodeNotes :: ByteString -> NotesKeeper NotesTable
+decodeNotes :: BS.ByteString -> NotesKeeper NotesTable
 decodeNotes bs =
     case JSON.decodingNotes bs of
         Left reason -> throwError $ JSONErr reason
@@ -236,3 +246,34 @@ appendNotes path notes = do
     let byteEntry = encodingNotes [(path', notes)]
     notesFile <- gets notesPath
     performIO $ BS.appendFile notesFile byteEntry
+
+runOnEditingFile :: ProgName -> NotesKeeper String
+runOnEditingFile prog = do
+    editPath <- gets editingPath
+    let counter = new :: CounterObj
+    (path, handle) <- performIO $ repeatedlyTryLock editPath counter
+    performIO $ runProg path handle
+    where
+        {- It tries to lock new files until success. Then it runs `prog` shell command. -}
+        repeatedlyTryLock path counter = do
+            {- Opening the file just to obtain the handle to pass to lock function. -}
+            handle <- openFile path ReadWriteMode
+            owned <- hTryLock handle ExclusiveLock
+            if owned
+            then do
+                return (path, handle)
+            else do
+                hClose handle
+                let (suffix, counter') = next counter
+                repeatedlyTryLock (path -<.> suffix) counter'
+
+        runProg path handle = do
+            rawSystem prog [path] --TODO: add arguments
+            content <- readFile path
+            {- The file is no more useful, so it is removed.
+            NB: it is removed before the handle is unlocked, because if the lock is released before the file is
+            removed, someone else can access the file in the middle (namely before the file is removed). -}
+            removeFile path
+            hUnlock handle
+            hClose handle
+            return content
