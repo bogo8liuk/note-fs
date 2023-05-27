@@ -34,11 +34,12 @@ replInput = do
             unless isEnd replInput
     where
         continueOnError op =
+            {- Returning `False` in case of recoverable errors, because the semantics is not the end of the repl -}
             lift (op `catchError` handleErrorWith (return False))
 
         manageCommand prog args
             | prog == Lexer.replEmptyProg =
-                return True
+                return False
             | otherwise = do
                 cmd <- Parsing.anyCommand prog args
                 runCommand cmd
