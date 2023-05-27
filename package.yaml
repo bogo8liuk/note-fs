@@ -79,6 +79,16 @@ executables:
     - -main-is Take
     dependencies:
     - note-fs
+  nfs-edit:
+    main:                Edit.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    - -main-is Edit
+    dependencies:
+    - note-fs
 
 tests:
   note-fs-test:

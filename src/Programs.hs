@@ -2,6 +2,7 @@ module Programs
     ( repl
     , seeExec
     , takeExec
+    , editExec
 ) where
 
 import Data.Map.Strict
@@ -36,7 +37,7 @@ exitOnError (Right ok) = return ok
 
 execCommand :: IO ()
 execCommand = do
-    st <- setup Exe Config.historyFile Config.notesFile Config.editingFile
+    st <- setup Eager Config.historyFile Config.notesFile Config.editingFile
     prog <- getProgName
     args <- getArgs
     res <- runAsIO (parseCmdAndPerform prog args) st
@@ -58,9 +59,12 @@ seeExec = execCommand
 takeExec :: IO ()
 takeExec = execCommand
 
+editExec :: IO ()
+editExec = execCommand
+
 repl :: IO ()
 repl = do
-    st <- setup Repl Config.historyFile Config.notesFile Config.editingFile
+    st <- setup Lazy Config.historyFile Config.notesFile Config.editingFile
     res <- runAsIO Repl.perform st
     {- This is done just for a better semantics. -}
     exitOnError res
