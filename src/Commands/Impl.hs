@@ -41,6 +41,12 @@ editCmd prog path = do
 exitCmd :: NotesKeeper ()
 exitCmd = doNothing
 
+commitCmd :: NotesKeeper ()
+commitCmd = commitChanges
+
+loadCmd :: NotesKeeper ()
+loadCmd = populateNotes
+
 runCommand :: Command -> NotesKeeper ()
 runCommand cmd =
     case cmd of
@@ -48,3 +54,8 @@ runCommand cmd =
         TAKE path notes -> takeCmd path notes
         EDIT prog path -> editCmd prog path
         EXIT -> exitCmd
+        COMMIT -> commitCmd
+        LOAD -> loadCmd
+        Seq cmd1 cmd2 -> do
+            runCommand cmd1
+            runCommand cmd2

@@ -3,6 +3,8 @@ module Commands.Lexer
     , replSee
     , replTake
     , replEdit
+    , replCommit
+    , replLoad
     , exeSee
     , exeTake
     , exeEdit
@@ -19,6 +21,12 @@ replTake = "take"
 
 replEdit :: String
 replEdit = "edit"
+
+replCommit :: String
+replCommit = "commit"
+
+replLoad :: String
+replLoad = "load"
 
 exeSee :: String
 exeSee = "nfs-see"

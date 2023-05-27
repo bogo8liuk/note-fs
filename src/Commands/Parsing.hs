@@ -35,6 +35,9 @@ progArg =
         <> help "the program to use for opening a file"
         )
 
+noArgs :: Parser ()
+noArgs = pure ()
+
 defaultMods :: String -> InfoMod a
 defaultMods headerStr =
        fullDesc
@@ -64,8 +67,14 @@ editCmdParser =
 exitCmdParser :: ParserInfo Command
 exitCmdParser =
     EXIT <$ info (noArgs <**> helper) (defaultMods "exit - exit the note-fs program")
-    where
-        noArgs = pure ()
+
+commitCmdParser :: ParserInfo Command
+commitCmdParser =
+    COMMIT <$ info (noArgs <**> helper) (defaultMods "commit - it brings the performed changes on the file system")
+
+loadCmdParser :: ParserInfo Command
+loadCmdParser =
+    LOAD <$ info (noArgs <**> helper) (defaultMods "load - it loads the cache with the data in the file system")
 
 performParser :: ParserInfo Command -> String -> [String] -> NotesKeeper Command
 performParser parseCmd prog args =
@@ -90,6 +99,12 @@ editCmd = performParser editCmdParser
 exitCmd :: String -> [String] -> NotesKeeper Command
 exitCmd = performParser exitCmdParser
 
+commitCmd :: String -> [String] -> NotesKeeper Command
+commitCmd = performParser commitCmdParser
+
+loadCmd :: String -> [String] -> NotesKeeper Command
+loadCmd = performParser loadCmdParser
+
 exeGetCommand :: String -> (String -> [String] -> NotesKeeper Command)
 exeGetCommand prog
     | prog == Lexer.exeSee =
@@ -111,6 +126,10 @@ replGetCommand prog
         editCmd
     | prog == Lexer.replExit =
         exitCmd
+    | prog == Lexer.replCommit =
+        commitCmd
+    | prog == Lexer.replLoad =
+        loadCmd
     | otherwise =
         \_ _ -> throwError $ InvalidCommand prog
 

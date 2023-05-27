@@ -16,6 +16,7 @@ module Env
     , displayLn
     , displayLn'
     , ResumeOp
+    , populateNotes
     , checkFileExists
     , commitChanges
     , commitIfEagerMode
