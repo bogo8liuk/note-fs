@@ -20,6 +20,7 @@ description:         Please see the README on GitHub at <https://github.com/bogo
 
 dependencies:
 - base >= 4.7 && < 5
+- transformers
 - aeson
 - bytestring
 - text
@@ -28,6 +29,7 @@ dependencies:
 - filepath
 - directory
 - process
+- haskeline
 - optparse-applicative
 - hs-utils
 

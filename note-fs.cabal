@@ -45,11 +45,13 @@ library
     , containers
     , directory
     , filepath
+    , haskeline
     , hs-utils
     , mtl
     , optparse-applicative
     , process
     , text
+    , transformers
   default-language: Haskell2010
 
 executable nfs-repl
@@ -68,12 +70,14 @@ executable nfs-repl
     , containers
     , directory
     , filepath
+    , haskeline
     , hs-utils
     , mtl
     , note-fs
     , optparse-applicative
     , process
     , text
+    , transformers
   default-language: Haskell2010
 
 executable nfs-see
@@ -92,12 +96,14 @@ executable nfs-see
     , containers
     , directory
     , filepath
+    , haskeline
     , hs-utils
     , mtl
     , note-fs
     , optparse-applicative
     , process
     , text
+    , transformers
   default-language: Haskell2010
 
 executable nfs-take
@@ -116,12 +122,14 @@ executable nfs-take
     , containers
     , directory
     , filepath
+    , haskeline
     , hs-utils
     , mtl
     , note-fs
     , optparse-applicative
     , process
     , text
+    , transformers
   default-language: Haskell2010
 
 test-suite note-fs-test
@@ -139,10 +147,12 @@ test-suite note-fs-test
     , containers
     , directory
     , filepath
+    , haskeline
     , hs-utils
     , mtl
     , note-fs
     , optparse-applicative
     , process
     , text
+    , transformers
   default-language: Haskell2010
