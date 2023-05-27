@@ -18,7 +18,7 @@ seeCmd path = do
     path' <- canonicalizePath' path
     notes <- getNotesOf path'
     displayLn ""
-    displayLn ("---- NOTES ON " ++ path ++ " ----")
+    displayLn ("---- NOTES ON " ++ path' ++ " ----")
     displayLn ""
     displayLn' notes
 
