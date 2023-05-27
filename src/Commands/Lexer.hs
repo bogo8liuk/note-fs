@@ -1,6 +1,5 @@
 module Commands.Lexer
-    ( replEmptyProg
-    , replExit
+    ( replExit
     , replSee
     , replTake
     , replEdit
@@ -8,9 +7,6 @@ module Commands.Lexer
     , exeTake
     , exeEdit
 ) where
-
-replEmptyProg :: String
-replEmptyProg = ""
 
 replExit :: String
 replExit = "exit"

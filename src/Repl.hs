@@ -38,7 +38,7 @@ replInput = do
             lift (op `catchError` handleErrorWith (return False))
 
         manageCommand prog args
-            | prog == Lexer.replEmptyProg =
+            | prog == emptyProg =
                 return False
             | otherwise = do
                 cmd <- Parsing.anyCommand prog args
