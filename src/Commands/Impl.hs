@@ -29,14 +29,14 @@ takeCmd path notes = do
     displayLn ("---- taking notes on " ++ path' ++ " ----")
     overwriteEntry path' notes
     displayLn "done!"
-    commitIfExeMode
+    commitIfEagerMode
 
 editCmd :: ProgName -> FilePath -> NotesKeeper ()
 editCmd prog path = do
     path' <- canonicalizePath' path
     checkFileExists path'
     editEntryWith prog path'
-    commitIfExeMode
+    commitIfEagerMode
 
 exitCmd :: NotesKeeper ()
 exitCmd = doNothing

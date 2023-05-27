@@ -118,5 +118,5 @@ anyCommand :: String -> [String] -> NotesKeeper Command
 anyCommand prog args = do
     mode <- getMode
     case mode of
-        Repl -> replGetCommand prog prog args
-        Exe -> exeGetCommand prog prog args
+        Lazy -> replGetCommand prog prog args
+        Eager -> exeGetCommand prog prog args

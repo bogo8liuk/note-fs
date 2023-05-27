@@ -18,7 +18,7 @@ module Env
     , ResumeOp
     , checkFileExists
     , commitChanges
-    , commitIfExeMode
+    , commitIfEagerMode
     , canonicalizePath'
     , getNotesOf
     , removeEntry
@@ -42,10 +42,10 @@ import JSON
 type NotesTable = Map FilePath Notes
 
 data Mode =
-    {- Commands are executed in a repl. -}
-      Repl
-    {- Commands are executed as stand-alone executables -}
-    | Exe
+    {- The effects of commands on the file-system aren't immediately performed, but they are delayed. -}
+      Lazy
+    {- The effects of commands on the file-system have to immediately performed. -}
+    | Eager
 
 data NotesState =
     NotesState
@@ -224,12 +224,12 @@ commitChanges = do
     notesFile <- gets notesPath
     performIO $ BS.writeFile notesFile byteEntry
 
-commitIfExeMode :: NotesKeeper ()
-commitIfExeMode = do
+commitIfEagerMode :: NotesKeeper ()
+commitIfEagerMode = do
     mode <- getMode
     case mode of
-        Exe -> commitChanges
-        Repl -> doNothing
+        Eager -> commitChanges
+        Lazy -> doNothing
 
 canonicalizePath' :: FilePath -> NotesKeeper FilePath
 canonicalizePath' = performIO . canonicalizePath
