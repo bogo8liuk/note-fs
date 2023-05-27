@@ -8,6 +8,7 @@ module Env
     , catchError
     , handleErrorWith
     , getMode
+    , getHistoryPath
     , runAsIO
     , performIO
     , display
@@ -152,6 +153,9 @@ update f = do
 
 getMode :: NotesKeeper Mode
 getMode = gets mode
+
+getHistoryPath :: NotesKeeper FilePath
+getHistoryPath = gets historyPath
 
 isNotesInMem :: NotesKeeper Bool
 isNotesInMem = gets isPopulated
