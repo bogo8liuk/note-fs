@@ -18,7 +18,7 @@ seeCmd path = do
     path' <- canonicalizePath' path
     notes <- getNotesOf path'
     displayLn ""
-    displayLn ("    ---- NOTES ON " ++ path ++ " ----")
+    displayLn ("---- NOTES ON " ++ path ++ " ----")
     displayLn ""
     displayLn' notes
 
@@ -26,8 +26,9 @@ takeCmd :: FilePath -> Text -> NotesKeeper ()
 takeCmd path notes = do
     path' <- canonicalizePath' path
     checkFileExists path'
-    displayLn ("...taking notes on " ++ path' ++ "...")
+    displayLn ("---- taking notes on " ++ path' ++ " ----")
     overwriteEntry path' notes
+    displayLn "done!"
     commitIfExeMode
 
 editCmd :: ProgName -> FilePath -> NotesKeeper ()

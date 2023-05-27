@@ -65,7 +65,7 @@ exitCmdParser :: ParserInfo Command
 exitCmdParser =
     EXIT <$ info (noArgs <**> helper) (defaultMods "exit - exit the note-fs program")
     where
-        noArgs = Opt.empty :: Parser ()
+        noArgs = pure ()
 
 performParser :: ParserInfo Command -> String -> [String] -> NotesKeeper Command
 performParser parseCmd prog args =
