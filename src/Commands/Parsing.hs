@@ -1,3 +1,18 @@
+{- ---- Guidelines to write a new parser ----
+
+1) First of all, this module relies on `optparse-applicative` package. So, you have to build a `ParserInfo` value which
+wraps a `Command` value. In this way, you build up the parser for all the arguments.
+
+2) Define a function with following signature:
+    String -> [String] -> NotesKeeper Command
+the implementation should consists in evaluating `performParser`:
+    performParser <your_args_parser>
+
+3) Update `replGetCommand` (if you want to make your command available for the repl) and `exeGetCommand` (if you want
+to make your command an executable) and pattern match on program name. To do it, you should update `Commands.Lexer`
+module firstly, by adding the lexical tokens of your command.
+-}
+
 module Commands.Parsing
     ( seeCmd
     , takeCmd
