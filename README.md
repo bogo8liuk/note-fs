@@ -19,6 +19,8 @@ of the repl, since it can bring to (deliberately unhandled) race conditions.
 - Haskell language, since the tool is actually written in Haskell;
 - stack build system;
 - `hs-utils` library, available (here)[https://github.com/bogo8liuk/hs-utils];
+- `optparse-applicative`, available (here)[https://hackage.haskell.org/package/optparse-applicative].
+- `aeson`, available (here)[https://hackage.haskell.org/package/aeson]
 
 ### Contributing
 Contributions are welcomed, so feel free to start a pull request or to open an issue! Anyway, if you want to implement
