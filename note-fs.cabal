@@ -13,6 +13,7 @@ author:         Luca Borghi
 maintainer:     Luca Borghi
 copyright:      2023 Luca Borghi
 license:        GPL-3
+license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
